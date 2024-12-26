@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen>
   final TextEditingController inlineimagecontroller =
       GetIt.instance.get<InlineImageProvider>().getController();
   bool isDialInteracting = false;
+  String errorVal = "";
 
   @override
   void initState() {
@@ -172,6 +173,8 @@ class _HomeScreenState extends State<HomeScreen>
                               controller: inlineimagecontroller,
                               specialTextSpanBuilder: ImageBuilder(),
                               decoration: InputDecoration(
+                                hintText: errorVal,
+                                hintStyle: TextStyle(color: Colors.red),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.r),
                                 ),
@@ -262,21 +265,31 @@ class _HomeScreenState extends State<HomeScreen>
                                     onTap: () {
                                       logger.i(
                                           'Save button clicked, showing dialog : ${animationProvider.isEffectActive(FlashEffect())}');
-                                      showDialog(
-                                          context: this.context,
-                                          builder: (context) {
-                                            return SaveBadgeDialog(
-                                              speed: speedDialProvider,
-                                              animationProvider:
-                                                  animationProvider,
-                                              textController:
-                                                  inlineImageProvider
-                                                      .getController(),
-                                              isInverse: animationProvider
-                                                  .isEffectActive(
-                                                      InvertLEDEffect()),
-                                            );
-                                          });
+                                      inlineimagecontroller.text == ""
+                                          ? setState(() {
+                                              errorVal =
+                                                  "Please fill out this field";
+                                            })
+                                          : {
+                                              setState(() {
+                                                errorVal = "";
+                                              }),
+                                              showDialog(
+                                                  context: this.context,
+                                                  builder: (context) {
+                                                    return SaveBadgeDialog(
+                                                      speed: speedDialProvider,
+                                                      animationProvider:
+                                                          animationProvider,
+                                                      textController:
+                                                          inlineImageProvider
+                                                              .getController(),
+                                                      isInverse: animationProvider
+                                                          .isEffectActive(
+                                                              InvertLEDEffect()),
+                                                    );
+                                                  })
+                                            };
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
